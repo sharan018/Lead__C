@@ -1,0 +1,52 @@
+.slds-list_vertical {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.slds-item {
+    margin: 10px 0;
+}
+
+.slds-m-left_medium {
+    margin-left: 20px;
+}
+
+.slds-button_icon {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.slds-m-right_xx-small {
+    margin-right: 5px;
+}
+
+a {
+    color: #0070d2;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+
+.account-name {
+    padding-left: 50px; /* Indentation for account name */
+   
+}
+.no-wrap {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.slds-text-longform {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
+
