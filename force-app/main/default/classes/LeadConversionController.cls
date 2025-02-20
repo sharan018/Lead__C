@@ -8,9 +8,10 @@ public static List<Lead__c> getLeadInformation(Id recordId) {
     } catch (Exception e) {
         System.debug('Error in getLeadInformation: ' + e.getMessage());
         return new List<Lead__c>(); 
-    }
+    } 
 }
 
+ 
 //Existing Account
 @AuraEnabled(cacheable=true)
 public static List<Account> searchAccounts(String searchText) {
@@ -38,7 +39,20 @@ public static List<Opportunityp__c> getrelatedOpportunity(String oppId) {
 }
 
 @AuraEnabled
-public static void convertCustomLead(Id leadId) {
+public static List<Map<String, String>> getAccounts() {
+    List<Map<String, String>> accounts = new List<Map<String, String>>();
+    for (Account a : [SELECT Id, Name,(select Id,Name from Opportunities) FROM Account]) {
+        accounts.add(
+            new Map<String, String>{ 'label' => a.Name, 'value' => a.Id }
+        );
+    }
+    return accounts;
+}
+
+@AuraEnabled
+public static void convertCustomLead(Id leadId,String dontcreateOpp) {
+    String getmessage =dontcreateOpp;
+    System.debug('getmessage -->'+getmessage);
     SYstem.debug('leadId -->'+leadId);
     try {
 
@@ -55,7 +69,7 @@ public static void convertCustomLead(Id leadId) {
                                       insert accList; 
                                               }
 
-                             System.debug('id -->' + accList);
+                             System.debug('id -->' + accList[0].Id);
       
 
                      List<Contact> conList =new List<Contact>();       
@@ -64,6 +78,7 @@ public static void convertCustomLead(Id leadId) {
                       newContact.LastName = customLead.Name;
                       newContact.Phone = customLead.Phone__c;
                       newContact.Email = customLead.Email__C;
+                      newContact.AccountId=accList[0].Id;
                       conList.add(newContact);
                   if(!conList.isEmpty()){
          insert conList;
@@ -72,20 +87,23 @@ public static void convertCustomLead(Id leadId) {
 
          //Create an Opportunity
          List<Opportunityp__c> OppList =new List<Opportunityp__c>();
+         if(getmessage == null){
+         
          Opportunityp__c newOpportunity = new Opportunityp__c();
          newOpportunity.Name = customLead.Company__c + ' Deal';
          newOpportunity.Stage__c = 'Prospecting'; 
          newOpportunity.CloseDate__c = Date.today().addMonths(1); 
          newOpportunity.AccountId__c = accList[0].Id;
+         newOpportunity.Contact__c =conList[0].Id;
          OppList.add(newOpportunity);
-
+         }
          if(!OppList.isEmpty()){
          insert OppList;
          }
-
-         customLead.status__c='Closed - Converted';
-         update customLead;
-         System.debug('Created Opportunity --> ' + OppList);
+        
+        //  customLead.status__c='Closed - Converted';
+         delete customLead;
+         System.debug('customLead --> ' + customLead);
 
          System.debug('Lead converted successfully!');
 

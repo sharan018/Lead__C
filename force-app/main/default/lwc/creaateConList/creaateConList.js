@@ -62,10 +62,10 @@ export default class CreaateConList extends LightningElement {
         const selectEvent = new CustomEvent('selection', {
             detail: this.childSelectedContacts
         });
-        this.dispatchEvent(selectEvent);
+        this.dispatchEvent(selectEvent); 
     }
 
-
+ 
     clearSearchResults() {
         this.searchResults = null;
     }

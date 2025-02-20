@@ -1,5 +1,5 @@
 public with sharing class SearchableComboboxController {
-    @AuraEnabled
+   /* @AuraEnabled
     public static List<Map<String, String>> getAccounts() {
         List<Map<String, String>> accounts = new List<Map<String, String>>();
         for (Account a : [SELECT Id, Name,(select Id,Name from Opportunities) FROM Account]) {
@@ -8,7 +8,7 @@ public with sharing class SearchableComboboxController {
             );
         }
         return accounts;
-    }
+    }*/
     @AuraEnabled
     public static List<Map<String, String>> getContactsWithRelatedAccounts() {
         List<Map<String, String>> contacts = new List<Map<String, String>>();
@@ -56,21 +56,19 @@ public static List<Map<String, String>> getContacts() {
         
         contactsWithAccounts.add(contactMap);
     }
-    
+     
     return contactsWithAccounts;
 }
 
-    @AuraEnabled
+   /* @AuraEnabled
        public static List<Map<String, String>> getContactstwo() {
         List<Map<String, String>> contactsWithAccounts = new List<Map<String, String>>();
         
-        // Query Contacts with their related Account names
         for (Contact c : [SELECT Id, Name, Account.Name FROM Contact]) {
             String displayLabel = c.Name;
             
-            // Only append account name if it exists, with a newline
             if (c.Account != null && c.Account.Name != null) {
-                displayLabel += '\n' + c.Account.Name;  // Add line break between Contact and Account
+                displayLabel += '\n' + c.Account.Name;  
             }
             
             contactsWithAccounts.add(
@@ -79,7 +77,7 @@ public static List<Map<String, String>> getContacts() {
         }
         
         return contactsWithAccounts;
-    }
+    }*/
 
 
     //account and contact

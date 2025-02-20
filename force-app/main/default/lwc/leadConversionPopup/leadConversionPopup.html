@@ -1,110 +1,8 @@
 <template>
+    <template if:true={closePopUp}> 
     <lightning-card title="Convert Lead" icon-name="" style="slds-align_absolute-center">
-        <!-- <button class="slds-button slds-button_neutral button-container" onclick={toggleIcon} title="Toggle Arrow">
-            <lightning-icon 
-                icon-name={currentIcon} 
-                size="small" 
-                alternative-text="Toggle"
-                class="arrow-icon">
-            </lightning-icon>
-        </button>
-        <div class="slds-align_absolute-center">
-            
-            <div class="slds-col slds-size_3-of-7 ">
-                <div class="slds-grid slds-gutters">
-
-                    <div class="slds-col slds-size_1-of-2 slds-p-around_medium">
-        <lightning-radio-group 
-        name="leftRadio" 
-        label="Create New Account" 
-        options={AccradioOptions} 
-        value={selectedLeftRadio} 
-        onchange={handleAccountRadioChange}>
-    </lightning-radio-group>
-        <lightning-input 
-            type="text"  
-            label="Account Name"  
-            value={accountName} 
-            onchange={handleInputChange}>
-        </lightning-input>
-    </div>
-
-    <div class="verticalLine">
-      </div>
-
-    <div class="slds-col slds-size_1-of-2 slds-p-around_medium">
-        <lightning-radio-group 
-        name="leftRadio" 
-        label="Create Existting Account" 
-        options={ConradioOptions} 
-        value={selectedLeftRadio} 
-        onchange={handleContactRadioChange}>
-    </lightning-radio-group>
-        <div class="search-container">
-            <lightning-input 
-                type="text" 
-                label="Search Account" 
-                placeholder="Type to search accounts..." 
-                value={searchedText} 
-                onchange={handleSearch}>
-            </lightning-input>
-        </div>
-
-        <template if:true={AccountList}>
-            <template for:each={accountOptions} for:item="account">
-                <div key={account.value}>
-                    <template if:true={hideButton}>
-                        <lightning-button 
-                            label={account.label} 
-                            title="Non-primary action" 
-                            onclick={handleClick} 
-                            value={account} 
-                            class="slds-m-left_x-small">
-                        </lightning-button>
-                    </template>
-                </div>
-            </template>
-        </template>
-    </div>
-</div>
-
-           <div class="slds-grid slds-gutters">
-            <div class="slds-col slds-size_1-of-2 slds-p-around_medium">
-       <lightning-input type="text"  label="Contact Name"  value={contactName} onchange={handleInputChange}>
-            </lightning-input>
-   
-</div>
-<div class="verticalLine">
-</div>
-<div class="slds-col slds-size_1-of-2 slds-p-around_medium"> 
-          <lightning-combobox name="contactList" label="Contacts" value={selectedContact} placeholder="Select a Contact" options={contacts} onchange={handleChange}></lightning-combobox>
-                </div> 
-        </div>
-            
-          
-          
-            <lightning-input type="text"  label="Opportunity Name"  value={opportunityName} onchange={handleInputChange}>
-            </lightning-input>
-            
-          <h1>Owner</h1>
-           <div class="slds-form-element__control slds-input-icon" style="display: flex;position: relative;">
-                <lightning-icon icon-name="utility:advertising" style="position: absolute;padding: 5px;" size="small" alternative-text="Search Icon"></lightning-icon>
-               
-                <input label="Owner" type="text" id="inputField" style="padding-left: 30px" class="slds-input" value={owner}/>
-            </div>
-        </div>
-    </div>
-    
-
-       
-        <div class="slds-p-around_medium slds-align_absolute-center">
-            <lightning-button label="Convert" variant="brand" onclick={handleConvertLead}></lightning-button>
-            <lightning-button label="Cancel" variant="neutral" onclick={handleCancel}></lightning-button>
-        </div>
- -->
-
     <!--Account Section-->
-    <template if:true={errorMessage}>
+    <template if:true={errorMessage}> 
         <div class="slds-text-color_error">
             <lightning-icon icon-name="utility:error" size="small" alternative-text="Error" class="slds-m-right_small"></lightning-icon>
             {errorMessage}
@@ -140,42 +38,10 @@
                 <div class="verticalLine"></div>
                 <!-- Third Column: Search Existing Account -->
                 <div class="slds-col slds-size_5-of-12 slds-p-around_medium">
-                    <!-- <lightning-radio-group 
-                        name="rightRadio" 
-                        label="Choose Existing Account" 
-                        options={ConradioOptions} 
-                        value={selectedRightRadio} 
-                        onchange={handleContactRadioChange}>
-                    </lightning-radio-group> -->
                     <span><b>Choose Existing Account</b></span>
                     <!-- radio -->
             <lightning-input   type="radio"   value={selectedAccValue}    onclick={handleExistingAccountRadioChange} checked={ExsistingAccountAccountchecked}></lightning-input>
-        
-                    <!-- <div class="search-container">
-                        <lightning-input 
-                            type="text" 
-                            label="Search Account" 
-                            placeholder="Type to search accounts..." 
-                            value={searchedText} 
-                            onchange={handleSearch}>
-                        </lightning-input>
-                    </div>
-        
-                    <template if:true={AccountList}>
-                        <template for:each={accountOptions} for:item="account">
-                            <div key={account.value}>
-                                <template if:true={hideButton}>
-                                    <lightning-button 
-                                        label={account.label} 
-                                        title="Non-primary action" 
-                                        onclick={handleClick} 
-                                        value={account} 
-                                        class="slds-m-left_x-small">
-                                    </lightning-button>
-                                </template>
-                            </div>
-                        </template>
-                    </template> -->
+                    
                     <div class="slds-form-element">
                         <div class="slds-form-element__control">
                             <lightning-input label="Account" onchange={search} onfocus={showPickListOptions} type="search" value={selectedAccValue} onclear={handleClear} >
@@ -244,7 +110,7 @@
                 <!-- Second Column: Create New Account -->
                 <div class="slds-col slds-size_5-of-12 slds-p-around_medium">
                    
-                    <span><b>Create Create Create</b></span>
+                    <span><b>Create New Contact</b></span>
                     <!-- radio -->
             <lightning-input   type="radio"       onclick={handleNewContactRadioChange} checked={NewContactChekeded}></lightning-input>
                     <template if:true={showContactExist}>
@@ -268,10 +134,9 @@
                     <span><b>Choose Existing Contact</b></span>
                     <!-- radio -->
             <lightning-input   type="radio"   value={contactName}    onclick={handleExistingContactRadioChange} checked={ExistingContactChekeded}></lightning-input>
-                    
-                    <!-- <lightning-combobox name="contactList" label="Contacts" value={selectedContact} placeholder="Select a Contact" options={contacts} onchange={handleChange}></lightning-combobox> -->
-<c-creaate-con-list onselection={selectedNavHandler}></c-creaate-con-list>
-<template if:true={arrowclickCont}>
+                    <!--Child component for contacts  -->
+            <c-creaate-con-list onselection={selectedNavHandler}></c-creaate-con-list>
+             <template if:true={arrowclickCont}>
     
             <div>
                 <lightning-card>
@@ -279,7 +144,7 @@
             </lightning-card>
             </div>
     
-</template>
+          </template>
                     
                 </div>
             </div>
@@ -310,7 +175,9 @@
                     <!-- radio -->
             <lightning-input   type="radio"   value={opportunityName}    onclick={handleNewOpportunityRadioChange} checked={NewOppotunityChekeded}></lightning-input>
                     <lightning-input type="text"  label="Opportunity Name"  value={opportunityName} onchange={handleInputChange}>
-                    </lightning-input>              
+                    </lightning-input> 
+                    <lightning-input   type="radio"   value={dontcreaeteOpportunity}   label="Don't create an opportunity upon conversion"  onclick={handleDontCreateOpportunityRadioChange} checked={DontChekeded}></lightning-input>
+               
                   </div>
         
                 <!-- Third Column: Search Existing Account -->
@@ -322,7 +189,6 @@
                     <!-- radio -->
             <lightning-input   type="radio"     onclick={handleExistingOpportunityRadioChange} checked={ExistingOppotunityChekeded}></lightning-input>
                     
-                    <!-- <lightning-combobox name="contactList" label="Contacts" value={selectedContact} placeholder="Select a Contact" options={contacts} onchange={handleChange}></lightning-combobox> -->
                     <template if:true={arrowclickOpportunity}>
                         
                             <lightning-input type="text"   label="Existing Opportunity" value={tatalopp} ></lightning-input>
@@ -330,17 +196,13 @@
                     
                     <template if:true={arrowshowOpportunity}>
                         <lightning-card>
-                            <template for:each={AccountReletedOppList} for:item="searchResult">
-                                <div key={searchResult.Id} class="slds-p-around_medium">
-                                    <!-- Radio button for selecting the record -->
-                                    <lightning-input type="checkbox"  onclick={handleEditRowSelection} value={searchResult.Id} checked={PicSelected}  data-id={searchResult.Id}></lightning-input>
-                                   
-                                    <p><strong>Account Name:</strong>{searchResult.Name}</p>
-                                    <p><strong>Closed Date:</strong> {searchResult.CloseDate__c}</p>
-                                    <p><strong>Amount:</strong>{searchResult.Amount__c}</p>
-                                    <p><strong>Opportunity Owner:</strong>{searchResult.Owner.Name}</p>
-                                </div>
-                            </template>
+                            <lightning-combobox 
+                            label="Select Opportunity" 
+                            value={selectedOpptId} 
+                            options={AccountReletedOppList} 
+                            onchange={onChangeOppourtunity}
+                            data-id={AccountReletedOppList.Id}>
+                        </lightning-combobox>
                         </lightning-card>
                         
                         
@@ -360,7 +222,7 @@
             <div class="slds-col slds-size_3-of-8 slds-p-around_medium">
                 <span>Record Owner</span> 
                 <div class="slds-form-element__control slds-input-icon" style="display: flex; position: relative;">
-                    <lightning-icon icon-name="utility:advertising" style="position: absolute; padding: 5px;" size="small" alternative-text="Search Icon"></lightning-icon>
+                    <lightning-icon icon-name="standard:user" style="position: absolute; padding:3px;" size="small" alternative-text="Search Icon"></lightning-icon>
                     <input label="Owner" type="text" id="inputField" style="padding-left: 30px" class="slds-input" value={owner}/>
                 </div>
             </div>
@@ -382,4 +244,5 @@
         
          
   </lightning-card>
+</template>
 </template>
