@@ -7,6 +7,9 @@ import getAccounts from "@salesforce/apex/LeadConversionController.getAccounts";
 import NAME_FIELD from '@salesforce/schema/Lead__c.Name';
 import SALUTATION_FIELD from '@salesforce/schema/Lead__c.Salutation__c';
 import getrelatedOpportunity from '@salesforce/apex/LeadConversionController.getrelatedOpportunity';
+import getRelatedContactCount from '@salesforce/apex/LeadConversionController.getRelatedContactCount';
+import { CloseActionScreenEvent } from 'lightning/actions';
+
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 
@@ -70,6 +73,8 @@ export default class LeadConversionPopup extends LightningElement {
      @track SelectedNewaccountName;
      @track SelectedNewcontactName;
      @track SelectedNewcOpportName;
+     @track countReletedContact;
+     @track getEmptySelectedOpptId;
     AccradioOptions = [
         { label: '', value: 'option1' },
        
@@ -204,6 +209,8 @@ handleConvertLead(){
             this.ExistingContactChekeded =false;
             this.ExistingOppotunityChekeded =false;
             this.closePopUp =false;
+            this.dispatchEvent(new CloseActionScreenEvent());
+
     console.log('closePopUp -->'+this.closePopUp);
         console.log('this.dontCreateOpportunity 123'+this.dontCreateOpportunity);
         this.errorMessage =false;
@@ -267,6 +274,8 @@ if(this.selectedOpptId && this.dataFromChild && this.selectedAccValue && this.Ex
     this.ExistingContactChekeded =true;
     this.ExsistingAccountAccountchecked =true;
     this.closePopUp =false;
+    this.dispatchEvent(new CloseActionScreenEvent());
+
     this.errorMessage =false;
     const evt = new ShowToastEvent({
         title: 'Toast Notification Success',
@@ -306,6 +315,16 @@ handleAccountRadioChange(event){
 }
 
 handleExistingAccountRadioChange(event){
+    
+    
+    const evt = new ShowToastEvent({
+                title: 'Choose Existing Records',
+                message: 'please select Existing Account,Contact and Opportunities',
+                variant: 'warning',
+                mode: 'dismissable'
+            });
+            this.dispatchEvent(evt);
+        
     this.getExistingValue = this.selectedAccValue;
     console.log('this.getExistingValue -->'+this.getExistingValue);
     // this.AccountRadioChange =' ';
@@ -486,6 +505,7 @@ toggleIconOpportunity() {
         this.countAccount =getcountofvalues +'  Account Maches';
         this.clearSearchResults();
         this.getRelatedOpportunities();
+        this.getReletedContactCount();
     }
 
     clearSearchResults() {
@@ -517,7 +537,7 @@ toggleIconOpportunity() {
     }
     handleEditRowSelection(event){
         console.log('handleEditRowSelection -->'+event.target.value);
-        var getCheckedValue =event.target.value;
+        var getCheckedValue =event.target.value; 
         console.log('this.PicSelected =>'+this.PicSelected);
         const dataId = event.target.dataset.id;
         console.log('Selected row data-id: ', dataId);
@@ -528,6 +548,7 @@ toggleIconOpportunity() {
     }
     onChangeOppourtunity(event){
        this.selectedOpptId= event.target.value;
+       this.getEmptySelectedOpptId =event.target.value;
        var datset =event.target.dataset.value;
        console.log('datset: '+JSON.stringify(datset));
         console.log('Selected row data-id opoopoppp: '+JSON.stringify(this.selectedOpptId));
@@ -549,6 +570,23 @@ toggleIconOpportunity() {
         if(this.DontChekeded ==true){
             this.dontCreateOpportunity ='dontCreateOpportunity';
         }
+    }
+    getReletedContactCount(){
+        alert('inside');
+        getRelatedContactCount({
+            accId :this.getSelectedAccount
+        })
+        .then(result=>{
+     this.countReletedContact =result.length +' Contact Matches';
+        })
+        .catch(error =>{
+
+        })
+    }
+    handleCancel(){
+        this.closePopUp =false;
+        this.dispatchEvent(new CloseActionScreenEvent());
+
     }
   
 }

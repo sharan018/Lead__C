@@ -48,6 +48,17 @@ public static List<Map<String, String>> getAccounts() {
     }
     return accounts;
 }
+@AuraEnabled(cacheable=true)
+public static List<Contact> getRelatedContactCount(Id accId){
+    try {
+
+        List<Contact>  conCount =[Select Id,Name from contact where AccountId =:accId];
+        
+        return conCount;
+    } catch (Exception e) {
+        throw new AuraHandledException(e.getMessage());
+    }
+}
 
 @AuraEnabled
 public static void convertCustomLead(Id leadId,String dontcreateOpp) {

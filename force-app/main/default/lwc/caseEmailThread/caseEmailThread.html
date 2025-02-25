@@ -1,0 +1,23 @@
+<template>
+    <lightning-card title="Email Communication">
+        <div class="email-thread">
+            <template if:true={emails}>
+                <template for:each={emails} for:item="email">
+                    <div key={email.Id} class="email-item">
+                        <p><strong>From:</strong> {email.FromAddress}</p>
+                        <p><strong>To:</strong> {email.ToAddress}</p>
+                        <p><strong>Subject:</strong> {email.Subject}</p>
+                        <p>{email.TextBody}</p>
+                        <p><em>{email.CreatedDate}</em></p>
+                        <hr/>
+                    </div>
+                </template>
+            </template>
+        </div>
+
+        <lightning-input label="Subject" value={subject} onchange={handleSubjectChange}></lightning-input>
+        <lightning-textarea label="Message" value={body} onchange={handleBodyChange}></lightning-textarea>
+        <lightning-input label="To Address" value={toAddress} onchange={handleToAddressChange}></lightning-input>
+        <lightning-button label="Send Email" onclick={sendEmail} variant="brand"></lightning-button>
+    </lightning-card>
+</template>
