@@ -9,13 +9,14 @@ import SALUTATION_FIELD from '@salesforce/schema/Lead__c.Salutation__c';
 import getrelatedOpportunity from '@salesforce/apex/LeadConversionController.getrelatedOpportunity';
 import getRelatedContactCount from '@salesforce/apex/LeadConversionController.getRelatedContactCount';
 import { CloseActionScreenEvent } from 'lightning/actions';
+import { NavigationMixin } from 'lightning/navigation';
 
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 
 
 
-export default class LeadConversionPopup extends LightningElement {
+export default class LeadConversionPopup extends NavigationMixin(LightningElement) {
     nameField = NAME_FIELD;
     SALUTATION_FIELD = SALUTATION_FIELD;
     @track closePopUp =true;
@@ -24,6 +25,7 @@ export default class LeadConversionPopup extends LightningElement {
    // @api recordId ; 
     lead;
     @track getLeadId;
+    @track isLoading = false;
 
     @api owner;
     @track accountName;
@@ -75,6 +77,7 @@ export default class LeadConversionPopup extends LightningElement {
      @track SelectedNewcOpportName;
      @track countReletedContact;
      @track getEmptySelectedOpptId;
+     @track recId;
     AccradioOptions = [
         { label: '', value: 'option1' },
        
@@ -148,9 +151,11 @@ handleClick(event){
 }
 
 //Convert Lead
-handleConvertLead(){
+handleConvertLead(event){
     
-    alert('handleConvertLead -->');
+  //  alert('handleConvertLead -->');
+   
+    //console.log('recId  after-->');
     console.log('this.NewOppotunityChekeded -->'+this.NewOppotunityChekeded);
     console.log('this.NewContactChekeded -->'+this.NewContactChekeded);
     console.log('this.NewAccountchecked -->'+this.NewAccountchecked);
@@ -161,46 +166,30 @@ handleConvertLead(){
     console.log('this.dataFromChild -->'+this.dataFromChild);
     console.log('this.selectedOpptId -->'+this.selectedOpptId);
     this.getLeadId =this.recordId;
-    // if(this.NewOppotunityChekeded ==true && this.NewContactChekeded ==true &&this.NewAccountchecked ==false){
-    //     console.log('inside 1st if');
-    //     const evt = new ShowToastEvent({
-    //         title: 'Toast Notification Warning',
-    //         message: 'please select  new Account',
-    //         variant: 'warning',
-    //         mode: 'dismissable'
-    //     });
-    //     this.dispatchEvent(evt);
-    
-
+    // if(this.NewContactChekeded ==true && this.NewAccountchecked ==true  && this.NewOppotunityChekeded ==true ||this.DontChekeded ==true ){
+    this.forNewConversion();
     // }
-    // if(this.NewOppotunityChekeded ==true && this.NewAccountchecked ==true && this.NewContactChekeded ==false){
-    //     console.log('inside 2nd if');
-    //     const evt = new ShowToastEvent({
-    //         title: 'Toast Notification Warning',
-    //         message: 'Please Select new Contact',
-    //         variant: 'warning',
-    //         mode: 'dismissable'
-    //     });
-    //     this.dispatchEvent(evt);
-    
-
+    // else if(this.ExistingOppotunityChekeded == true && this.ExistingContactChekeded ==true && this.ExsistingAccountAccountchecked ==true ){
+   this.forExistingConversion();
     // }
-    // if(this.NewOppotunityChekeded ==false && this.NewContactChekeded ==true && this.NewAccountchecked ==true){
-    //     console.log('inside 3rd if');
-    //     if(this.DontChekeded ==false){
+  
 
-    //     const evt = new ShowToastEvent({
-    //         title: 'Toast Notification Warning',
-    //         message: 'Please Select New Opportunity',
-    //         variant: 'warning',
-    //         mode: 'dismissable'
-    //     });
-    //     this.dispatchEvent(evt);
-    //     }
 
-    // }
+
+
+
+
+}
+forNewConversion(){
     if(this.NewContactChekeded ==true && this.NewAccountchecked ==true  && this.NewOppotunityChekeded ==true ||this.DontChekeded ==true ){
-        console.log('inside 4th if');
+
+        this.isLoading = true;
+        
+        // Stop spinner after 2 seconds
+        setTimeout(() => {
+            this.isLoading = false;
+        }, 90000);
+        console.log('inside forNewConversion');
         console.log('SelectedNewcOpportName' + this.SelectedNewcOpportName);
         console.log('SelectedNewcontactName' + this.SelectedNewcontactName);
         console.log('SelectedNewaccountName' + this.SelectedNewaccountName);
@@ -208,56 +197,64 @@ handleConvertLead(){
             this.ExsistingAccountAccountchecked =false;
             this.ExistingContactChekeded =false;
             this.ExistingOppotunityChekeded =false;
-            this.closePopUp =false;
+            this.closePopUp =true;
             this.dispatchEvent(new CloseActionScreenEvent());
 
-    console.log('closePopUp -->'+this.closePopUp);
-        console.log('this.dontCreateOpportunity 123'+this.dontCreateOpportunity);
-        this.errorMessage =false;
+    console.log('closePopUp -->'+this.dontCreateOpportunity);
+        console.log('this.getLeadId 123'+this.getLeadId);
+        //this.errorMessage =false;
 
     convertCustomLead({leadId : this.getLeadId,
                        dontcreateOpp :this.dontCreateOpportunity
     })   
     .then(result =>{
-
+       
        console.log('result -->'+JSON.stringify(result));
-       const evt = new ShowToastEvent({
+        this.recId = result;
+         
+        if (result && result.length > 0) {
+            for (let i = 0; i < result.length; i++) {
+                let contactId = result[i].Id; 
+               
+               
+                console.log('Navigating to Contact ID: ' + contactId);
+                let contactUrl = ` https://powerhs-f-dev-ed.develop.lightning.force.com/lightning/r/Contact/${contactId}/view`;
+                
+                window.location.href = contactUrl;
+                // this[NavigationMixin.Navigate]({
+                //     type: 'standard__recordPage',
+                //     attributes: {
+                //         recordId: contactId,
+                //         actionName: 'view'
+                //     },
+                // });
+              
+            }
+        }
+            else {
+            console.error('No Contact ID found in the result.');
+        }
+       
+   
+    
+    })
+    .catch(error =>{
+    console.log(error);
+    })
+    const evt = new ShowToastEvent({
         title: 'Toast Notification Success',
         message: 'Lead Conversion completed successfully',
         variant: 'success',
         mode: 'dismissable'
     });
     this.dispatchEvent(evt);
-    })
-    .catch(error =>{
-    console.log(error);
-    })
-// }
-}
-// else if(this.ExistingOppotunityChekeded == true && this.ExistingContactChekeded ==true && this.ExsistingAccountAccountchecked ==true){
-//     console.log('inside 5th elseif');
-//     this.NewOppotunityChekeded =false;
-//     this.NewAccountchecked =false;
-//     this.NewContactChekeded =false;
-    
-//     if(this.selectedOpptId == null && this.dataFromChild  ==null && this.selectedAccValue ==null){
-//     const evt = new ShowToastEvent({
-//         title: 'Toast Notification Success',
-//         message: 'Please select records',
-//         variant: 'warning',
-//         mode: 'dismissable'
-//     });
-//     this.dispatchEvent(evt);
     
 // }
-// }
-if(this.selectedSearchResult.value != this.dataFromChild.accountId ){
-    console.log('inside 6th if');
-    this.errorMessage = 'Specified Contact must be parented by specified Account'; 
-}else{
-    console.log('releted Contact Matched');
 }
-if(this.selectedOpptId ==null){
+}
+forExistingConversion(){
+    if(this.ExistingOppotunityChekeded == true && this.ExistingContactChekeded ==true && this.ExsistingAccountAccountchecked ==true ){
+    if(this.selectedOpptId ==null){
     const evt = new ShowToastEvent({
                 title: 'Existing Opportunity',
                 message: 'Please select Releted Opportunity',
@@ -265,29 +262,63 @@ if(this.selectedOpptId ==null){
                 mode: 'dismissable'
             });
             this.dispatchEvent(evt);
-}
+        }
+    }
+        console.log(' this.dataFromChild --->'+JSON.stringify(this.dataFromChild));
+            if(this.selectedSearchResult.value != this.dataFromChild.accountId && this.dataFromChild.length != 0){
+                console.log('inside 6th if');
+                this.errorMessage = 'Specified Contact must be parented by specified Account'; 
+            }
+            if (!this.dataFromChild || this.dataFromChild.length === 0) {
+                console.log('dataFromChild is either null, undefined, or empty');
+                const evt = new ShowToastEvent({
+                    title: 'Existing Contact',
+                    message: 'Please select Releted Contact',
+                    variant: 'warning',
+                    mode: 'dismissable'
+                });
+                this.dispatchEvent(evt);
+            }
 
-if(this.selectedOpptId && this.dataFromChild && this.selectedAccValue && this.ExistingOppotunityChekeded == true && this.ExistingContactChekeded ==true && this.ExsistingAccountAccountchecked ==true && this.selectedSearchResult.value == this.dataFromChild.accountId){
-    console.log('inside 7th if');
+ if(this.selectedOpptId && this.dataFromChild && this.selectedAccValue && this.ExistingOppotunityChekeded == true && this.ExistingContactChekeded ==true && this.ExsistingAccountAccountchecked ==true && this.selectedSearchResult.value == this.dataFromChild.accountId){
+                console.log('inside 7th if'+ this.selectedAccValue);;
+               console.log('dataFromChild-->'+JSON.stringify(this.dataFromChild.value));
+                this.ExistingOppotunityChekeded =true;
+                this.ExistingContactChekeded =true;
+                this.ExsistingAccountAccountchecked =true;
+            
+                
+                    let contactId = this.dataFromChild.value
+                   
+                    console.log('Navigating to Contact ID: ' + contactId);
+                    let contactUrl = ` https://powerhs-f-dev-ed.develop.lightning.force.com/lightning/r/Contact/${contactId}/view`;
+                    
+            
+                    window.location.href = contactUrl;
+                
+                //this.closePopUp =false;
+                this.isLoading = true;
+        
+                // Stop spinner after 2 seconds
+                setTimeout(() => {
+                    this.isLoading = false;
+                }, 5000);
+                  
+                this.errorMessage =false;
+                const evt = new ShowToastEvent({
+                    title: 'Toast Notification Success',
+                    message: 'Lead Conversion completed successfully',
+                    variant: 'success',
+                    mode: 'dismissable'
+                });
+                this.dispatchEvent(evt);
+              
+            }
+         
+
+
+
    
-    this.ExistingOppotunityChekeded =true;
-    this.ExistingContactChekeded =true;
-    this.ExsistingAccountAccountchecked =true;
-    this.closePopUp =false;
-    this.dispatchEvent(new CloseActionScreenEvent());
-
-    this.errorMessage =false;
-    const evt = new ShowToastEvent({
-        title: 'Toast Notification Success',
-        message: 'Lead Conversion completed successfully',
-        variant: 'success',
-        mode: 'dismissable'
-    });
-    this.dispatchEvent(evt);
-  
-}
-
-  
 }
 
 handleInputChange(event){
@@ -414,6 +445,12 @@ toggleIconAccount() {
     }else{
         this.arrowclickAcc =false;
     }
+    this.isLoading = true;
+        
+    // Stop spinner after 2 seconds
+    setTimeout(() => {
+        this.isLoading = false;
+    }, 1000);
 }
 toggleIconConatact() {
     this.isDownContact = !this.isDownContact;
@@ -424,6 +461,12 @@ toggleIconConatact() {
             this.arrowclickCont =false;
             this.showContactExist =true;
         }
+        this.isLoading = true;
+        
+        // Stop spinner after 2 seconds
+        setTimeout(() => {
+            this.isLoading = false;
+        }, 1000);
 }
 toggleIconOpportunity() {
     this.isDownOpp = !this.isDownOpp;
@@ -433,6 +476,12 @@ toggleIconOpportunity() {
     else{
         this.arrowshowOpportunity =false;
     }
+    this.isLoading = true;
+        
+    // Stop spinner after 2 seconds
+    setTimeout(() => {
+        this.isLoading = false;
+    }, 1000);
 
 }
 
@@ -554,7 +603,7 @@ toggleIconOpportunity() {
         console.log('Selected row data-id opoopoppp: '+JSON.stringify(this.selectedOpptId));
     }
     selectedNavHandler(event) {
-        alert('selectedNavHandler ');
+      //  alert('selectedNavHandler ');
         const playerName = event.detail;
         console.log('playerName ==>'+JSON.stringify(playerName));
         this.dataFromChild =playerName;
@@ -563,7 +612,7 @@ toggleIconOpportunity() {
         // );
     }
     handleDontCreateOpportunityRadioChange(){
-        alert('handleDontCreateOpportunityRadioChange');
+      //  alert('handleDontCreateOpportunityRadioChange');
         console.log('DontChekeded -->'+this.DontChekeded);
         this.DontChekeded =true;
         this.NewOppotunityChekeded =false;
@@ -572,7 +621,7 @@ toggleIconOpportunity() {
         }
     }
     getReletedContactCount(){
-        alert('inside');
+       // alert('inside');
         getRelatedContactCount({
             accId :this.getSelectedAccount
         })

@@ -1,0 +1,34 @@
+<template>
+    <lightning-card title="Email Conversation">
+        <div class="slds-p-around_medium">
+            <template if:true={emails}>
+                <template for:each={emails} for:item="email">
+                    <div key={email.Id} class="slds-box slds-m-bottom_small">
+                        <p><strong>From:</strong> {email.FromAddress}</p>
+                        <p><strong>To:</strong> {email.ToAddress}</p>
+                        <p><strong>Subject:</strong> {email.Subject}</p>
+                        <p><strong>Date:</strong> {email.CreatedDate}</p>
+                        <div class="slds-m-top_small" lwc-dom="manual">
+                            <p><strong>Message:</strong></p>
+                            <div>{email.HtmlBody}</div>
+                        </div>
+                    </div>
+                </template>
+            </template>
+            <template if:false={emails}>
+                <p>No email conversations found.</p>
+            </template>
+        </div>
+    </lightning-card>
+
+    <lightning-card title="Send Email">
+        <div class="slds-p-around_medium">
+            <lightning-input label="To" type="email" value={toEmail} onchange={handleToEmailChange}></lightning-input>
+            <lightning-input label="Subject" type="text" value={subject} onchange={handleSubjectChange}></lightning-input>
+            <lightning-textarea label="Message" value={message} onchange={handleMessageChange}></lightning-textarea>
+            <div class="slds-m-top_medium">
+                <lightning-button label="✉️ Send" variant="brand" onclick={sendEmail}></lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+</template>

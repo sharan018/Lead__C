@@ -1,5 +1,5 @@
 <template>
-    <template if:true={closePopUp}> 
+    <!-- <template if:true={closePopUp}>  -->
     <lightning-card title="Convert Lead" icon-name="" style="slds-align_absolute-center">
     <!--Account Section-->
     <template if:true={errorMessage}> 
@@ -241,8 +241,12 @@
             <lightning-button label="Cancel" variant="neutral" onclick={handleCancel}></lightning-button>
         </div>
         
-        
+        <template if:true={isLoading}>
+            <div class="spinner-overlay">
+                <div class="neon-spinner"></div>
+            </div>
+        </template>
          
   </lightning-card>
-</template>
+<!-- </template> -->
 </template>

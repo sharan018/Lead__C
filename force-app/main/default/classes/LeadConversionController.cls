@@ -61,10 +61,11 @@ public static List<Contact> getRelatedContactCount(Id accId){
 }
 
 @AuraEnabled
-public static void convertCustomLead(Id leadId,String dontcreateOpp) {
+public static List<contact> convertCustomLead(Id leadId,String dontcreateOpp) {
     String getmessage =dontcreateOpp;
     System.debug('getmessage -->'+getmessage);
     SYstem.debug('leadId -->'+leadId);
+    List<Contact> conList =new List<Contact>();
     try {
 
                Lead__c customLead = [SELECT Name, Email__c, Phone__c, Company__c FROM Lead__c WHERE Id = :leadId];
@@ -82,18 +83,20 @@ public static void convertCustomLead(Id leadId,String dontcreateOpp) {
 
                              System.debug('id -->' + accList[0].Id);
       
-
-                     List<Contact> conList =new List<Contact>();       
+                            
                       Contact newContact = new Contact();
-                      newContact.FirstName = customLead.Name; 
+                     // newContact.FirstName = customLead.Name; 
                       newContact.LastName = customLead.Name;
                       newContact.Phone = customLead.Phone__c;
                       newContact.Email = customLead.Email__C;
                       newContact.AccountId=accList[0].Id;
                       conList.add(newContact);
-                  if(!conList.isEmpty()){
+                      
+                //  if(!conList.isEmpty()){
+                    System.debug('conList222 -->' + conList);
          insert conList;
-         }
+         System.debug('conList -->' + conList[0].Id);
+       //  }
          System.debug('Created Contact --> ' + conList);
 
          //Create an Opportunity
@@ -107,20 +110,23 @@ public static void convertCustomLead(Id leadId,String dontcreateOpp) {
          newOpportunity.AccountId__c = accList[0].Id;
          newOpportunity.Contact__c =conList[0].Id;
          OppList.add(newOpportunity);
+         System.debug('newOpportunity -->' + newOpportunity);
          }
          if(!OppList.isEmpty()){
+            System.debug('isEmpty -->' + conList);
          insert OppList;
          }
         
         //  customLead.status__c='Closed - Converted';
-         delete customLead;
+        //return conList[0].Id;  // Return the Contact Id
          System.debug('customLead --> ' + customLead);
 
          System.debug('Lead converted successfully!');
-
        
+         return conList;
     } catch (Exception e) {
         System.debug('Error in converting Custom Lead: ' + e.getMessage());
+        return null;
     }
 }
 }
