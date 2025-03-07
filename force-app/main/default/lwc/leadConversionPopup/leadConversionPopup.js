@@ -165,7 +165,7 @@ handleConvertLead(event){
     console.log('this.selectedAccValue -->'+this.selectedAccValue);
     console.log('this.dataFromChild -->'+this.dataFromChild);
     console.log('this.selectedOpptId -->'+this.selectedOpptId);
-    this.getLeadId =this.recordId;
+    this.getLeadId =this.recordId; 
     // if(this.NewContactChekeded ==true && this.NewAccountchecked ==true  && this.NewOppotunityChekeded ==true ||this.DontChekeded ==true ){
     this.forNewConversion();
     // }
